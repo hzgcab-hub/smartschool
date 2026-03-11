@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Class List - SmartSchool</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            background: #3498db;
+            color: white;
+        }
+        .btn-success { background: #27ae60; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background: #34495e;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .action-links a {
+            margin-right: 10px;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-actions">
+            <h1>📚 Class Management</h1>
+            <a href="{% url 'class_create' %}" class="btn btn-success">➕ Add New Class</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Class Name</th>
+                    <th>Academic Year</th>
+                    <th>Class Teacher</th>
+                    <th>Sections</th>
+                    <th>Students</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for class in page_obj %}
+                <tr>
+                    <td><strong>{{ class.name }}</strong></td>
+                    <td>{{ class.academic_year }}</td>
+                    <td>{{ class.class_teacher.user.get_full_name|default:"Not Assigned" }}</td>
+                    <td>{{ class.total_sections }}</td>
+                    <td>{{ class.total_students }}</td>
+                    <td>
+                        {% if class.is_active %}
+                        <span class="badge">Active</span>
+                        {% endif %}
+                    </td>
+                    <td class="action-links">
+                        <a href="{% url 'class_detail' class.pk %}">View</a>
+                        <a href="{% url 'class_edit' class.pk %}">Edit</a>
+                        <a href="{% url 'class_delete' class.pk %}" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 50px;">
+                        <h3>No Classes Found</h3>
+                        <p>Click "Add New Class" to get started.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

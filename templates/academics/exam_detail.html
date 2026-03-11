@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ exam.name }} - Exam Details</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 15px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            background: #3498db;
+            color: white;
+        }
+        .btn-success { background: #27ae60; }
+        .btn-primary { background: #3498db; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-info { background: #3498db; color: white; }
+        .btn-secondary { background: #95a5a6; }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .info-item {
+            padding: 10px;
+        }
+        .info-item strong {
+            color: #7f8c8d;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .info-item p {
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .stat-card .label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .subjects-section {
+            margin-bottom: 30px;
+        }
+        .subjects-section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ exam.name }}</h1>
+            <div>
+                <a href="{% url 'exam_list' %}" class="btn btn-secondary">← Back</a>
+                <a href="{% url 'exam_edit' exam.pk %}" class="btn btn-warning">Edit Exam</a>
+            </div>
+        </div>
+
+        <!-- Exam Info -->
+        <div class="info-grid">
+            <div class="info-item">
+                <strong>Exam Type</strong>
+                <p>{{ exam.get_exam_type_display }}</p>
+            </div>
+            <div class="info-item">
+                <strong>Class</strong>
+                <p>{{ exam.class_group.name }}</p>
+            </div>
+            <div class="info-item">
+                <strong>Academic Year</strong>
+                <p>{{ exam.academic_year }}</p>
+            </div>
+            <div class="info-item">
+                <strong>Duration</strong>
+                <p>{{ exam.start_date|date:"M d, Y" }} - {{ exam.end_date|date:"M d, Y" }}</p>
+            </div>
+            <div class="info-item">
+                <strong>Result Date</strong>
+                <p>{{ exam.result_date|date:"M d, Y"|default:"Not set" }}</p>
+            </div>
+            <div class="info-item">
+                <strong>Status</strong>
+                <p>{% if exam.is_published %}Published{% else %}Draft{% endif %}</p>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number">{{ total_subjects }}</div>
+                <div class="label">Total Subjects</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ total_students }}</div>
+                <div class="label">Total Students</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ results_published }}</div>
+                <div class="label">Results Published</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ passed_count }}</div>
+                <div class="label">Students Passed</div>
+            </div>
+        </div>
+
+        <!-- Subjects Section -->
+        <div class="subjects-section">
+            <h2>📚 Exam Subjects</h2>
+            
+            {% if not exam.is_published %}
+            <a href="{% url 'exam_subject_add' exam.pk %}" class="btn btn-success" style="margin-bottom: 15px;">➕ Add Subject</a>
+            {% endif %}
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Exam Date</th>
+                        <th>Time</th>
+                        <th>Max Marks</th>
+                        <th>Pass Marks</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in subjects %}
+                    <tr>
+                        <td>{{ subject.subject.subject.name }}</td>
+                        <td>{{ subject.exam_date|date:"M d, Y" }}</td>
+                        <td>{{ subject.start_time|time:"H:i" }} - {{ subject.end_time|time:"H:i" }}</td>
+                        <td>{{ subject.max_marks }}</td>
+                        <td>{{ subject.pass_marks }}</td>
+                        <td>
+                            {% if subject.is_completed %}
+                            <span class="status-badge status-completed">Completed</span>
+                            {% else %}
+                            <span class="status-badge status-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'marks_entry' subject.pk %}" class="btn-info">Enter Marks</a>
+                            <a href="{% url 'exam_subject_edit' subject.pk %}" class="btn-warning">Edit</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align: center;">No subjects added yet</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            {% if subjects and not exam.is_published %}
+            <a href="{% url 'generate_results' exam.pk %}" class="btn btn-success">Generate Results</a>
+            {% endif %}
+            
+            {% if exam.is_published %}
+            <a href="{% url 'exam_results' exam.pk %}" class="btn btn-primary">View Results</a>
+            {% endif %}
+            
+            {% if not exam.is_published and subjects %}
+            <a href="{% url 'publish_results' exam.pk %}" class="btn btn-warning">Publish Results</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

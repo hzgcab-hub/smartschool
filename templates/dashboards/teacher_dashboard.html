@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - SmartSchool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            padding: 25px;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+        }
+
+        .logo span {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            border: 3px solid white;
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-top: 5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            gap: 12px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .page-title h1 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+
+        .page-title p {
+            color: #7f8c8d;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .stat-icon.blue { background: #e6f0ff; color: #3498db; }
+        .stat-icon.green { background: #e0f7e6; color: #27ae60; }
+        .stat-icon.orange { background: #fff0e0; color: #f39c12; }
+        .stat-icon.purple { background: #f0e6ff; color: #9b59b6; }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .stat-info p {
+            color: #7f8c8d;
+        }
+
+        /* Charts Row */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-header h3 {
+            color: #2c3e50;
+        }
+
+        /* Classes Grid */
+        .classes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .class-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border-left: 4px solid #27ae60;
+        }
+
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .class-header h3 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+        }
+
+        .class-badge {
+            background: #27ae60;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .class-stats {
+            display: flex;
+            gap: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .class-stats i {
+            color: #27ae60;
+            margin-right: 5px;
+        }
+
+        .class-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        /* Homework Table */
+        .homework-table {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            color: #7f8c8d;
+            font-weight: 600;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .status-badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .status-active { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>SmartSchool</span>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="user-name">{{ teacher.user.get_full_name }}</div>
+                <div class="user-role">Teacher</div>
+            </div>
+
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/classes/" class="nav-link"><i class="fas fa-school"></i> My Classes</a></li>
+               <a href="/students/" class="btn-sm btn-primary">View Students</a>
+                <li><a href="/academics/exams/" class="nav-link"><i class="fas fa-pencil-alt"></i> Exams</a></li>
+                <li><a href="/classes/homework/" class="nav-link"><i class="fas fa-book"></i> Homework</a></li>
+                <li><a href="/attendance/" class="nav-link"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1>Welcome, {{ teacher.user.first_name }}! 📚</h1>
+                    <p>{{ today|date:"l, F j, Y" }}</p>
+                </div>
+                <a href="{% url 'logout' %}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ my_classes|length }}</h3>
+                        <p>My Classes</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ my_subjects|length }}</h3>
+                        <p>Subjects</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>45</h3>
+                        <p>Total Students</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>6</h3>
+                        <p>Classes Today</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Classes -->
+            <h2 style="margin-bottom: 20px;">📖 My Classes</h2>
+            <div class="classes-grid">
+                {% for class in my_classes %}
+                <div class="class-card">
+                    <div class="class-header">
+                        <h3>{{ class.name }}</h3>
+                        <span class="class-badge">Class Teacher</span>
+                    </div>
+                    <div class="class-stats">
+                        <span><i class="fas fa-users"></i> 35 Students</span>
+                        <span><i class="fas fa-book"></i> 6 Subjects</span>
+                    </div>
+                    <div class="class-actions">
+    <a href="{% url 'class_list' %}" class="btn-sm btn-primary">View All Classes</a>
+    <a href="{% url 'class_create' %}" class="btn-sm btn-success">Add New Class</a>
+    <a href="{% url 'subject_list' %}" class="btn-sm btn-primary">Manage Subjects</a>
+</div>
+                </div>
+                {% empty %}
+                <p>No classes assigned yet.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Recent Homework -->
+            <div class="homework-table">
+                <h3 style="margin-bottom: 20px;">📝 Recent Homework</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Class</th>
+                            <th>Subject</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hw in recent_homework %}
+                        <tr>
+                            <td>{{ hw.title }}</td>
+                            <td>{{ hw.class_group.name }}</td>
+                            <td>{{ hw.subject.subject.name }}</td>
+                            <td>{{ hw.due_date }}</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                            <td><a href="/classes/homework/{{ hw.pk }}/" class="btn-sm btn-primary">View</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align: center;">No homework assigned yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

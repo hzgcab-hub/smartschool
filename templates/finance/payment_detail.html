@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Details - SmartSchool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+        
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .info-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            width: 150px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        .info-value {
+            flex: 1;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .amount-large {
+            font-size: 32px;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-credit-card"></i> Payment Details</h1>
+            <div>
+                <a href="{% url 'payment_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <a href="{% url 'payment_receipt' payment.pk %}" class="btn btn-success" target="_blank">
+                    <i class="fas fa-print"></i> Print Receipt
+                </a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <span class="status-badge status-{{ payment.status }}">
+                <i class="fas 
+                    {% if payment.status == 'completed' %}fa-check-circle
+                    {% elif payment.status == 'pending' %}fa-clock
+                    {% elif payment.status == 'failed' %}fa-times-circle
+                    {% endif %}">
+                </i>
+                {{ payment.get_status_display }}
+            </span>
+        </div>
+
+        <div class="amount-large">
+            ₹{{ payment.amount }}
+        </div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <div class="info-label">Receipt Number</div>
+                <div class="info-value">{{ payment.receipt_number|default:"Not generated" }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Payment Number</div>
+                <div class="info-value">{{ payment.payment_number }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Transaction ID</div>
+                <div class="info-value">{{ payment.transaction_id }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Payment Date</div>
+                <div class="info-value">{{ payment.payment_date|date:"d M Y H:i" }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Payment Method</div>
+                <div class="info-value">
+                    {% if payment.payment_method == 'cash' %}💵
+                    {% elif payment.payment_method == 'cheque' %}📝
+                    {% elif payment.payment_method == 'online' %}🌐
+                    {% elif payment.payment_method == 'card' %}💳
+                    {% elif payment.payment_method == 'upi' %}📱
+                    {% endif %}
+                    {{ payment.get_payment_method_display }}
+                </div>
+            </div>
+            {% if payment.reference_number %}
+            <div class="info-row">
+                <div class="info-label">Reference Number</div>
+                <div class="info-value">{{ payment.reference_number }}</div>
+            </div>
+            {% endif %}
+            {% if payment.bank_name %}
+            <div class="info-row">
+                <div class="info-label">Bank Name</div>
+                <div class="info-value">{{ payment.bank_name }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <h3 style="margin: 20px 0 10px;"><i class="fas fa-user-graduate"></i> Student Information</h3>
+        <div class="info-card">
+            <div class="info-row">
+                <div class="info-label">Student Name</div>
+                <div class="info-value">{{ payment.student.user.get_full_name }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Admission Number</div>
+                <div class="info-value">{{ payment.student.admission_number }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Class</div>
+                <div class="info-value">{{ payment.student.current_class }} - Section {{ payment.student.section }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Father's Name</div>
+                <div class="info-value">{{ payment.student.father_name }}</div>
+            </div>
+        </div>
+
+        {% if payment.invoice %}
+        <h3 style="margin: 20px 0 10px;"><i class="fas fa-file-invoice"></i> Invoice Information</h3>
+        <div class="info-card">
+            <div class="info-row">
+                <div class="info-label">Invoice Number</div>
+                <div class="info-value">{{ payment.invoice.invoice_number }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Invoice Total</div>
+                <div class="info-value">₹{{ payment.invoice.total }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Paid Amount</div>
+                <div class="info-value">₹{{ payment.invoice.paid_amount }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Due Amount</div>
+                <div class="info-value">₹{{ payment.invoice.due_amount }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if payment.remarks %}
+        <h3 style="margin: 20px 0 10px;"><i class="fas fa-sticky-note"></i> Remarks</h3>
+        <div class="info-card">
+            <p>{{ payment.remarks }}</p>
+        </div>
+        {% endif %}
+
+        <div class="action-buttons">
+            <a href="{% url 'payment_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Payments
+            </a>
+            <a href="{% url 'invoice_detail' payment.invoice.pk %}" class="btn btn-primary">
+                <i class="fas fa-file-invoice"></i> View Invoice
+            </a>
+        </div>
+    </div>
+</body>
+</html>

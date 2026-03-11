@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Receipt - SmartSchool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #f4f6f9;
+            padding: 40px;
+        }
+        .receipt {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 2px dashed #27ae60;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+        }
+        .header h1 {
+            color: #27ae60;
+            font-size: 24px;
+        }
+        .header h2 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-top: 5px;
+        }
+        .receipt-no {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 5px;
+            background: #ecf0f1;
+        }
+        .details {
+            margin: 20px 0;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dotted #ccc;
+        }
+        .label {
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+        .value {
+            font-weight: bold;
+        }
+        .amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px solid #27ae60;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .signature {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .print-btn {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 30px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .receipt { box-shadow: none; border: 2px dashed #000; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <div class="header">
+            <h1>🏫 SmartSchool</h1>
+            <h2>PAYMENT RECEIPT</h2>
+        </div>
+
+        <div class="receipt-no">
+            Receipt #: {{ payment.receipt_number|default:payment.payment_number }}
+        </div>
+
+        <div class="details">
+            <div class="row">
+                <span class="label">Date:</span>
+                <span class="value">{{ payment.payment_date|date:"d M Y H:i" }}</span>
+            </div>
+            <div class="row">
+                <span class="label">Payment Mode:</span>
+                <span class="value">
+                    {% if payment.payment_method == 'cash' %}💵 Cash
+                    {% elif payment.payment_method == 'cheque' %}📝 Cheque
+                    {% elif payment.payment_method == 'online' %}🌐 Online
+                    {% elif payment.payment_method == 'card' %}💳 Card
+                    {% elif payment.payment_method == 'upi' %}📱 UPI
+                    {% endif %}
+                </span>
+            </div>
+            {% if payment.reference_number %}
+            <div class="row">
+                <span class="label">Ref No:</span>
+                <span class="value">{{ payment.reference_number }}</span>
+            </div>
+            {% endif %}
+            <div class="row">
+                <span class="label">Student Name:</span>
+                <span class="value">{{ payment.student.user.get_full_name }}</span>
+            </div>
+            <div class="row">
+                <span class="label">Admission No:</span>
+                <span class="value">{{ payment.student.admission_number }}</span>
+            </div>
+            <div class="row">
+                <span class="label">Class:</span>
+                <span class="value">{{ payment.student.current_class }}-{{ payment.student.section }}</span>
+            </div>
+            {% if payment.invoice %}
+            <div class="row">
+                <span class="label">Invoice No:</span>
+                <span class="value">{{ payment.invoice.invoice_number }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="amount">
+            ₹ {{ payment.amount }}
+        </div>
+
+        <div class="row">
+            <span class="label">Amount in words:</span>
+            <span class="value">{{ payment.amount }} Rupees Only</span>
+        </div>
+
+        {% if payment.remarks %}
+        <div style="margin-top: 15px; padding: 10px; background: #f8f9fa;">
+            <strong>Remarks:</strong> {{ payment.remarks }}
+        </div>
+        {% endif %}
+
+        <div class="signature">
+            <div>
+                <span>_________________</span><br>
+                <span>Student/Parent</span>
+            </div>
+            <div>
+                <span>_________________</span><br>
+                <span>Authorized Signatory</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>This is a computer generated receipt - valid without signature</p>
+            <p>Thank you for your payment!</p>
+        </div>
+
+        <div class="print-btn">
+            <button onclick="window.print()" class="btn">
+                <i class="fas fa-print"></i> Print Receipt
+            </button>
+        </div>
+    </div>
+</body>
+</html>

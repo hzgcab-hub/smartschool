@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam List - SmartSchool</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            background: #3498db;
+            color: white;
+        }
+        .btn-success { background: #27ae60; }
+        .btn-primary { background: #3498db; }
+        .btn-info { background: #3498db; color: white; padding: 5px 10px; font-size: 12px; text-decoration: none; border-radius: 3px; }
+        .btn-warning { background: #f39c12; color: white; padding: 5px 10px; font-size: 12px; text-decoration: none; border-radius: 3px; }
+        
+        .search-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dde0e3;
+            border-radius: 5px;
+        }
+        .search-btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            height: 42px;
+        }
+        
+        .exam-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .exam-header h3 {
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        .exam-type {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        .exam-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .detail-item {
+            color: #2c3e50;
+        }
+        .detail-item strong {
+            color: #7f8c8d;
+            display: block;
+            font-size: 12px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-published { background: #d4edda; color: #155724; }
+        .badge-draft { background: #fff3cd; color: #856404; }
+        .exam-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-actions">
+            <h1>📝 Exam Management</h1>
+            <a href="{% url 'exam_create' %}" class="btn btn-success">➕ Create New Exam</a>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form method="GET" class="search-form">
+                <div class="form-group">
+                    <label>🔍 Search</label>
+                    <input type="text" name="q" class="form-control" placeholder="Search exams..." value="{{ query }}">
+                </div>
+                
+                <div class="form-group">
+                    <label>📖 Class</label>
+                    <select name="class" class="form-control">
+                        <option value="">All Classes</option>
+                        {% for class in classes %}
+                        <option value="{{ class.id }}" {% if class_id|stringformat:"s" == class.id|stringformat:"s" %}selected{% endif %}>{{ class.name }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>📋 Exam Type</label>
+                    <select name="type" class="form-control">
+                        <option value="">All Types</option>
+                        {% for type_value, type_label in exam_types %}
+                        <option value="{{ type_value }}" {% if exam_type == type_value %}selected{% endif %}>{{ type_label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="search-btn">Apply Filters</button>
+            </form>
+        </div>
+
+        <!-- Exam List -->
+        {% for exam in page_obj %}
+        <div class="exam-card">
+            <div class="exam-header">
+                <h3>{{ exam.name }}</h3>
+                <span class="exam-type">{{ exam.get_exam_type_display }}</span>
+            </div>
+            
+            <div class="exam-details">
+                <div class="detail-item">
+                    <strong>Class</strong>
+                    {{ exam.class_group.name }}
+                </div>
+                <div class="detail-item">
+                    <strong>Academic Year</strong>
+                    {{ exam.academic_year }}
+                </div>
+                <div class="detail-item">
+                    <strong>Duration</strong>
+                    {{ exam.start_date|date:"M d" }} - {{ exam.end_date|date:"M d, Y" }}
+                </div>
+                <div class="detail-item">
+                    <strong>Subjects</strong>
+                    {{ exam.total_subjects }}
+                </div>
+                <div class="detail-item">
+                    <strong>Students</strong>
+                    {{ exam.total_students }}
+                </div>
+                <div class="detail-item">
+                    <strong>Status</strong>
+                    {% if exam.is_published %}
+                    <span class="badge badge-published">Published</span>
+                    {% else %}
+                    <span class="badge badge-draft">Draft</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="exam-actions">
+                <a href="{% url 'exam_detail' exam.pk %}" class="btn-info">View Details</a>
+                <a href="{% url 'exam_edit' exam.pk %}" class="btn-warning">Edit</a>
+                {% if not exam.is_published %}
+                <a href="{% url 'exam_subject_add' exam.pk %}" class="btn-success">Add Subjects</a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 50px;">
+            <h3>No Exams Found</h3>
+            <p>Click "Create New Exam" to get started.</p>
+        </div>
+        {% endfor %}
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div style="margin-top: 30px; text-align: center;">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if class_id %}&class={{ class_id }}{% endif %}{% if exam_type %}&type={{ exam_type }}{% endif %}">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if class_id %}&class={{ class_id }}{% endif %}{% if exam_type %}&type={{ exam_type }}{% endif %}">Previous</a>
+            {% endif %}
+
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if class_id %}&class={{ class_id }}{% endif %}{% if exam_type %}&type={{ exam_type }}{% endif %}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if class_id %}&class={{ class_id }}{% endif %}{% if exam_type %}&type={{ exam_type }}{% endif %}">Last</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

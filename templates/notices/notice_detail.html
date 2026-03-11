@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ notice.title }} - SmartSchool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .notice-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 15px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            color: white;
+        }
+        .btn-primary { background: #3498db; }
+        .btn-success { background: #27ae60; }
+        .btn-warning { background: #f39c12; }
+        
+        .meta-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .meta-item {
+            color: #2c3e50;
+        }
+        .meta-item i {
+            color: #3498db;
+            width: 20px;
+            margin-right: 5px;
+        }
+        
+        .content {
+            line-height: 1.8;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .attachments {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .attachments h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .attachment-link {
+            display: inline-block;
+            padding: 8px 15px;
+            background: #ecf0f1;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        
+        .acknowledgment {
+            text-align: center;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="notice-card">
+            <div class="header">
+                <h1>{{ notice.title }}</h1>
+                <a href="{% url 'notice_list' %}" class="btn btn-primary">← Back</a>
+            </div>
+
+            <div class="meta-info">
+                <div class="meta-item">
+                    <i class="far fa-calendar-alt"></i> Published: {{ notice.publish_date|date:"F d, Y" }}
+                </div>
+                <div class="meta-item">
+                    <i class="far fa-user"></i> Author: {{ notice.author.get_full_name|default:notice.author.username }}
+                </div>
+                <div class="meta-item">
+                    <i class="far fa-folder"></i> Category: {{ notice.category.name|default:"Uncategorized" }}
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-flag"></i> Priority: 
+                    <span class="priority-{{ notice.priority }}">{{ notice.get_priority_display }}</span>
+                </div>
+                {% if notice.expiry_date %}
+                <div class="meta-item">
+                    <i class="far fa-hourglass"></i> Expires: {{ notice.expiry_date|date:"F d, Y" }}
+                </div>
+                {% endif %}
+                <div class="meta-item">
+                    <i class="far fa-eye"></i> Views: {{ notice.view_count }}
+                </div>
+            </div>
+
+            <div class="content">
+                {{ notice.content|linebreaks }}
+            </div>
+
+            {% if notice.attachment %}
+            <div class="attachments">
+                <h3><i class="fas fa-paperclip"></i> Attachments</h3>
+                <a href="{{ notice.attachment.url }}" class="attachment-link" target="_blank">
+                    <i class="fas fa-download"></i> Download Attachment
+                </a>
+            </div>
+            {% endif %}
+
+            {% if notice.requires_acknowledgment and not has_acknowledged %}
+            <div class="acknowledgment">
+                <form method="POST">
+                    {% csrf_token %}
+                    <p>This notice requires your acknowledgment.</p>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check-circle"></i> I Acknowledge
+                    </button>
+                </form>
+            </div>
+            {% elif notice.requires_acknowledgment and has_acknowledged %}
+            <div class="acknowledgment">
+                <p><i class="fas fa-check-circle" style="color: #27ae60;"></i> You have acknowledged this notice.</p>
+            </div>
+            {% endif %}
+
+            {% if request.user.role == 'admin' or request.user.role == 'super_admin' %}
+            <div class="action-buttons">
+                <a href="{% url 'notice_edit' notice.pk %}" class="btn btn-warning">Edit Notice</a>
+                <a href="{% url 'notice_delete' notice.pk %}" class="btn btn-warning" style="background: #e74c3c;" onclick="return confirm('Are you sure?')">Delete Notice</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

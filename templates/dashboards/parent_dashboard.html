@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Dashboard - SmartSchool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            padding: 25px;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .children-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .child-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .child-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .child-avatar {
+            width: 60px;
+            height: 60px;
+            background: #9b59b6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .child-info h3 {
+            color: #2c3e50;
+        }
+
+        .child-info p {
+            color: #7f8c8d;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #9b59b6;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-users"></i>
+                <span>SmartSchool</span>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <i class="fas fa-user" style="font-size: 3rem;"></i>
+                <h3 style="margin-top: 10px;">{{ request.user.get_full_name }}</h3>
+                <p>Parent</p>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="top-bar">
+                <h1>Welcome, Parent! 👋</h1>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+
+            <h2 style="margin-bottom: 20px;">👪 My Children</h2>
+
+            <div class="children-grid">
+                {% for child in children %}
+                <div class="child-card">
+                    <div class="child-header">
+                        <div class="child-avatar">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="child-info">
+                            <h3>{{ child.user.get_full_name }}</h3>
+                            <p>Class {{ child.current_class }}-{{ child.section }} | Roll: {{ child.roll_number }}</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <div class="stat-number">85%</div>
+                            <div>Attendance</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">A-</div>
+                            <div>Average</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <a href="/students/{{ child.pk }}/" style="flex: 1; background: #3498db; color: white; text-align: center; padding: 10px; border-radius: 5px; text-decoration: none;">View Profile</a>
+                        <a href="/finance/invoices/?student={{ child.pk }}" style="flex: 1; background: #27ae60; color: white; text-align: center; padding: 10px; border-radius: 5px; text-decoration: none;">Fee Details</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No children found linked to this account.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }} - SmartSchool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #9b59b6;
+            padding-bottom: 15px;
+        }
+        .form-group { margin-bottom: 20px; }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+        }
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .btn-primary { background: #9b59b6; color: white; }
+        .btn-secondary { background: #95a5a6; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ title|default:"Add New Exam" }}</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Exam Name</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Exam Type</label>
+                <select name="exam_type">
+                    <option value="unit_test">Unit Test</option>
+                    <option value="quarterly">Quarterly Exam</option>
+                    <option value="half_yearly">Half Yearly</option>
+                    <option value="annual">Annual Exam</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Class</label>
+                <input type="text" name="class_group" required>
+            </div>
+            <div class="form-group">
+                <label>Start Date</label>
+                <input type="date" name="start_date" required>
+            </div>
+            <div class="form-group">
+                <label>End Date</label>
+                <input type="date" name="end_date" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'exam_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grade Systems - SmartSchool</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            background: #3498db;
+            color: white;
+        }
+        .btn-success { background: #27ae60; }
+        .btn-primary { background: #3498db; }
+        .btn-info { background: #3498db; color: white; padding: 5px 10px; font-size: 12px; text-decoration: none; border-radius: 3px; }
+        .btn-warning { background: #f39c12; color: white; padding: 5px 10px; font-size: 12px; text-decoration: none; border-radius: 3px; }
+        
+        .grade-system-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+        }
+        .grade-system-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .grade-system-header h3 {
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-active { background: #d4edda; color: #155724; }
+        .badge-inactive { background: #f8d7da; color: #721c24; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th {
+            background: #34495e;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 13px;
+        }
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .grade-range {
+            display: inline-block;
+            background: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .action-links {
+            margin-top: 15px;
+        }
+        .action-links a {
+            margin-right: 15px;
+            color: #3498db;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-actions">
+            <h1>📊 Grade Systems</h1>
+            <a href="{% url 'grade_system_create' %}" class="btn btn-success">➕ Add Grade System</a>
+        </div>
+
+        {% for grade_system in grade_systems %}
+        <div class="grade-system-card">
+            <div class="grade-system-header">
+                <h3>{{ grade_system.name }} ({{ grade_system.academic_year }})</h3>
+                <span class="badge {% if grade_system.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                    {% if grade_system.is_active %}Active{% else %}Inactive{% endif %}
+                </span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Grade</th>
+                        <th>Min %</th>
+                        <th>Max %</th>
+                        <th>Grade Point</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for range in grade_system.ranges.all %}
+                    <tr>
+                        <td><span class="grade-range">{{ range.grade }}</span></td>
+                        <td>{{ range.min_percentage }}%</td>
+                        <td>{{ range.max_percentage }}%</td>
+                        <td>{{ range.grade_point|default:"-" }}</td>
+                        <td>{{ range.description|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center;">No grade ranges defined</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="action-links">
+                <a href="{% url 'grade_system_edit' grade_system.pk %}">✏️ Edit</a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 50px;">
+            <h3>No Grade Systems Found</h3>
+            <p>Click "Add Grade System" to create your first grading system.</p>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

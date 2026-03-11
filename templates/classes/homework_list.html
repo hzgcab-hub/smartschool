@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Homework List - SmartSchool</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            background: #3498db;
+            color: white;
+        }
+        .btn-success { background: #27ae60; }
+        .btn-primary { background: #3498db; }
+        .btn-info { background: #3498db; color: white; padding: 5px 10px; font-size: 12px; text-decoration: none; border-radius: 3px; }
+        .btn-warning { background: #f39c12; color: white; padding: 5px 10px; font-size: 12px; text-decoration: none; border-radius: 3px; }
+        
+        .search-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dde0e3;
+            border-radius: 5px;
+        }
+        .search-btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            height: 42px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #34495e;
+            color: white;
+            padding: 15px 10px;
+            text-align: left;
+        }
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        tr:hover { background: #f8f9fa; }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-pending { background: #fff3cd; color: #856404; }
+        .badge-submitted { background: #d4edda; color: #155724; }
+        .badge-graded { background: #cce5ff; color: #004085; }
+        .due-date {
+            font-weight: bold;
+        }
+        .due-date-urgent { color: #e74c3c; }
+        .due-date-warning { color: #f39c12; }
+        .due-date-ok { color: #27ae60; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-actions">
+            <h1>📚 Homework Management</h1>
+            {% if user.role == 'teacher' or user.role == 'admin' %}
+            <a href="{% url 'homework_create' %}" class="btn btn-success">➕ Assign New Homework</a>
+            {% endif %}
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form method="GET" class="search-form">
+                <div class="form-group">
+                    <label>🔍 Search</label>
+                    <input type="text" name="q" class="form-control" placeholder="Search by title..." value="{{ query }}">
+                </div>
+                
+                <div class="form-group">
+                    <label>📖 Class</label>
+                    <select name="class" class="form-control">
+                        <option value="">All Classes</option>
+                        {% for class in classes %}
+                        <option value="{{ class.id }}" {% if class_id|stringformat:"s" == class.id|stringformat:"s" %}selected{% endif %}>{{ class.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="search-btn">Apply Filters</button>
+            </form>
+        </div>
+
+        <!-- Homework Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Class</th>
+                    <th>Subject</th>
+                    <th>Teacher</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for homework in page_obj %}
+                {% now "Y-m-d" as today %}
+                <tr>
+                    <td><strong>{{ homework.title }}</strong></td>
+                    <td>{{ homework.class_group.name }}-{{ homework.section.name|default:"All" }}</td>
+                    <td>{{ homework.subject.subject.name }}</td>
+                    <td>{{ homework.teacher.user.get_full_name }}</td>
+                    <td>
+                        <span class="due-date 
+                            {% if homework.due_date|date:'Y-m-d' < today %}due-date-urgent
+                            {% elif homework.due_date|date:'Y-m-d' == today %}due-date-warning
+                            {% else %}due-date-ok{% endif %}">
+                            {{ homework.due_date }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if user.role == 'student' %}
+                            {% with submission=homework.submissions.all.0 %}
+                                {% if submission %}
+                                    {% if submission.marks_obtained %}
+                                        <span class="badge badge-graded">Graded ({{ submission.marks_obtained }})</span>
+                                    {% else %}
+                                        <span class="badge badge-submitted">Submitted</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge badge-pending">Pending</span>
+                                {% endif %}
+                            {% endwith %}
+                        {% else %}
+                            <span>{{ homework.submissions.count }} Submissions</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'homework_detail' homework.pk %}" class="btn-info">View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 50px;">
+                        <h3>No Homework Found</h3>
+                        {% if user.role == 'teacher' %}
+                        <p>Click "Assign New Homework" to get started.</p>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div style="margin-top: 20px; text-align: center;">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if class_id %}&class={{ class_id }}{% endif %}">First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if class_id %}&class={{ class_id }}{% endif %}">Previous</a>
+            {% endif %}
+
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if class_id %}&class={{ class_id }}{% endif %}">Next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if class_id %}&class={{ class_id }}{% endif %}">Last</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

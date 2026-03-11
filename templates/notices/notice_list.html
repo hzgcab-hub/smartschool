@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notice Board - SmartSchool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header h1 i {
+            color: #3498db;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-info {
+            background: #3498db;
+            color: white;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        /* Search Section */
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dde0e3;
+            border-radius: 5px;
+        }
+        .search-btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            height: 42px;
+        }
+        
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: white;
+            color: #7f8c8d;
+            text-decoration: none;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .filter-tab.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        /* Notice Cards */
+        .notice-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+            transition: transform 0.3s ease;
+        }
+        .notice-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        .notice-card.pinned {
+            border-left-color: #f39c12;
+            background: #fffaf0;
+        }
+        .notice-card.urgent {
+            border-left-color: #e74c3c;
+        }
+        
+        .notice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .notice-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notice-title h2 {
+            font-size: 18px;
+            color: #2c3e50;
+        }
+        .pinned-badge {
+            background: #f39c12;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+        .priority-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .priority-low { background: #ecf0f1; color: #7f8c8d; }
+        .priority-normal { background: #3498db20; color: #3498db; }
+        .priority-high { background: #f39c1220; color: #f39c12; }
+        .priority-urgent { background: #e74c3c20; color: #e74c3c; }
+        
+        .notice-meta {
+            display: flex;
+            gap: 20px;
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+        .notice-meta i {
+            margin-right: 5px;
+        }
+        
+        .notice-content {
+            color: #2c3e50;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .notice-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 15px;
+        }
+        .notice-stats {
+            display: flex;
+            gap: 15px;
+            color: #95a5a6;
+            font-size: 12px;
+        }
+        .notice-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 10px;
+        }
+        .empty-state i {
+            font-size: 48px;
+            color: #bdc3c7;
+            margin-bottom: 20px;
+        }
+        
+        .pagination {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        .pagination a, .pagination span {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            text-decoration: none;
+            border-radius: 5px;
+            color: #3498db;
+        }
+        .pagination .current {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-bullhorn"></i>
+                Notice Board
+            </h1>
+            <div>
+                {% if request.user.role == 'admin' or request.user.role == 'super_admin' %}
+                <a href="{% url 'notice_create' %}" class="btn btn-success">
+                    <i class="fas fa-plus-circle"></i> New Notice
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form method="GET" class="search-form">
+                <div class="form-group">
+                    <label>Search</label>
+                    <input type="text" name="query" class="form-control" placeholder="Search notices..." value="{{ request.GET.query }}">
+                </div>
+                
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" class="form-control">
+                        <option value="">All Categories</option>
+                        {% for category in form.category.field.queryset %}
+                        <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select name="priority" class="form-control">
+                        <option value="">All Priorities</option>
+                        <option value="low" {% if request.GET.priority == 'low' %}selected{% endif %}>Low</option>
+                        <option value="normal" {% if request.GET.priority == 'normal' %}selected{% endif %}>Normal</option>
+                        <option value="high" {% if request.GET.priority == 'high' %}selected{% endif %}>High</option>
+                        <option value="urgent" {% if request.GET.priority == 'urgent' %}selected{% endif %}>Urgent</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+
+        <!-- Notice List -->
+        {% for notice in page_obj %}
+        <div class="notice-card {% if notice.is_pinned %}pinned{% endif %} {% if notice.priority == 'urgent' %}urgent{% endif %}">
+            <div class="notice-header">
+                <div class="notice-title">
+                    <h2>{{ notice.title }}</h2>
+                    {% if notice.is_pinned %}
+                    <span class="pinned-badge"><i class="fas fa-thumbtack"></i> Pinned</span>
+                    {% endif %}
+                </div>
+                <span class="priority-badge priority-{{ notice.priority }}">
+                    {{ notice.get_priority_display }}
+                </span>
+            </div>
+            
+            <div class="notice-meta">
+                <span><i class="far fa-calendar"></i> {{ notice.publish_date|date:"M d, Y" }}</span>
+                <span><i class="far fa-user"></i> {{ notice.author.get_full_name|default:notice.author.username }}</span>
+                <span><i class="far fa-folder"></i> {{ notice.category.name|default:"Uncategorized" }}</span>
+                {% if notice.expiry_date %}
+                <span><i class="far fa-hourglass"></i> Expires: {{ notice.expiry_date|date:"M d, Y" }}</span>
+                {% endif %}
+            </div>
+            
+            <div class="notice-content">
+                {{ notice.content|truncatewords:50|linebreaks }}
+            </div>
+            
+            <div class="notice-footer">
+                <div class="notice-stats">
+                    <span><i class="far fa-eye"></i> {{ notice.view_count }} views</span>
+                    {% if notice.requires_acknowledgment %}
+                    <span><i class="far fa-check-circle"></i> Requires acknowledgment</span>
+                    {% endif %}
+                </div>
+                <div class="notice-actions">
+                    <a href="{% url 'notice_detail' notice.pk %}" class="btn-sm btn-info">Read More</a>
+                    {% if request.user.role == 'admin' or request.user.role == 'super_admin' %}
+                    <a href="{% url 'notice_edit' notice.pk %}" class="btn-sm btn-warning">Edit</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fas fa-bullhorn"></i>
+            <h3>No Notices Found</h3>
+            <p>There are no notices to display at the moment.</p>
+            {% if request.user.role == 'admin' or request.user.role == 'super_admin' %}
+            <a href="{% url 'notice_create' %}" class="btn btn-success">Create Your First Notice</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">« First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">‹ Previous</a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="current">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Next ›</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Last »</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

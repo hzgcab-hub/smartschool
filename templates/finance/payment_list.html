@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payments - SmartSchool Finance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #27ae60;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+        .btn-info {
+            background: #3498db;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            text-decoration: none;
+            border-radius: 3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            text-decoration: none;
+            border-radius: 3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .stat-icon.total { background: #3498db20; color: #3498db; }
+        .stat-icon.completed { background: #27ae6020; color: #27ae60; }
+        .stat-icon.pending { background: #f39c1220; color: #f39c12; }
+        .stat-icon.amount { background: #9b59b620; color: #9b59b6; }
+        
+        .stat-details h3 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .stat-details p {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #ecf0f1;
+            color: #7f8c8d;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+        .filter-tab i {
+            font-size: 12px;
+        }
+        .filter-tab:hover {
+            background: #bdc3c7;
+            color: white;
+        }
+        .filter-tab.active {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .search-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            font-weight: 500;
+            font-size: 13px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dde0e3;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        .search-btn {
+            background: #27ae60;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+        .search-btn:hover {
+            background: #229954;
+        }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 14px;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .status-completed { 
+            background: #d4edda; 
+            color: #155724;
+        }
+        .status-pending { 
+            background: #fff3cd; 
+            color: #856404;
+        }
+        .status-failed { 
+            background: #f8d7da; 
+            color: #721c24;
+        }
+        .status-refunded { 
+            background: #e9ecef; 
+            color: #6c757d;
+        }
+        
+        .amount {
+            font-weight: bold;
+            color: #27ae60;
+            font-size: 15px;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        
+        .action-links {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .action-links a {
+            padding: 5px 10px;
+            border-radius: 3px;
+            text-decoration: none;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            white-space: nowrap;
+        }
+        
+        .pagination {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .pagination a, .pagination span {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            text-decoration: none;
+            border-radius: 5px;
+            color: #27ae60;
+            transition: all 0.3s ease;
+        }
+        .pagination a:hover {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        .pagination .current {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .empty-state i {
+            font-size: 60px;
+            color: #bdc3c7;
+            margin-bottom: 20px;
+        }
+        .empty-state h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .empty-state p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        
+        .info-text {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-actions">
+            <h1>
+                <i class="fas fa-credit-card" style="color: #27ae60;"></i>
+                Payment Management
+            </h1>
+            <a href="{% url 'payment_create' %}" class="btn btn-success">
+                <i class="fas fa-plus-circle"></i> Record Payment
+            </a>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon total">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>{{ total_transactions|default:page_obj.paginator.count }}</h3>
+                    <p>Total Transactions</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon completed">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>{{ completed_count|default:0 }}</h3>
+                    <p>Completed</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon pending">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>{{ pending_count|default:0 }}</h3>
+                    <p>Pending</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon amount">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>₹{{ total_amount|default:0|floatformat:2 }}</h3>
+                    <p>Total Amount</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <a href="{% url 'payment_list' %}" class="filter-tab {% if not status %}active{% endif %}">
+                <i class="fas fa-list"></i> All
+            </a>
+            <a href="?status=completed" class="filter-tab {% if status == 'completed' %}active{% endif %}">
+                <i class="fas fa-check-circle"></i> Completed
+            </a>
+            <a href="?status=pending" class="filter-tab {% if status == 'pending' %}active{% endif %}">
+                <i class="fas fa-clock"></i> Pending
+            </a>
+            <a href="?status=failed" class="filter-tab {% if status == 'failed' %}active{% endif %}">
+                <i class="fas fa-times-circle"></i> Failed
+            </a>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form method="GET" class="search-form">
+                <div class="form-group">
+                    <label><i class="fas fa-search"></i> Search</label>
+                    <input type="text" name="q" class="form-control" placeholder="Receipt #, Student name, Admission #..." value="{{ query }}">
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-credit-card"></i> Payment Method</label>
+                    <select name="method" class="form-control">
+                        <option value="">All Methods</option>
+                        <option value="cash" {% if method == 'cash' %}selected{% endif %}>💵 Cash</option>
+                        <option value="cheque" {% if method == 'cheque' %}selected{% endif %}>📝 Cheque</option>
+                        <option value="online" {% if method == 'online' %}selected{% endif %}>🌐 Online</option>
+                        <option value="card" {% if method == 'card' %}selected{% endif %}>💳 Card</option>
+                        <option value="upi" {% if method == 'upi' %}selected{% endif %}>📱 UPI</option>
+                    </select>
+                </div>
+                
+                <input type="hidden" name="status" value="{{ status }}">
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-filter"></i> Apply Filters
+                </button>
+                {% if query or method %}
+                <a href="{% url 'payment_list' %}{% if status %}?status={{ status }}{% endif %}" class="btn btn-warning">
+                    <i class="fas fa-times"></i> Clear
+                </a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Payments Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Receipt #</th>
+                        <th>Date & Time</th>
+                        <th>Student Details</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Reference</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in page_obj %}
+                    <tr>
+                        <td>
+                            <strong><i class="fas fa-receipt"></i> {{ payment.receipt_number|default:payment.payment_number }}</strong>
+                        </td>
+                        <td>
+                            {{ payment.payment_date|date:"d/m/Y" }}<br>
+                            <small style="color: #7f8c8d;">{{ payment.payment_date|date:"H:i" }}</small>
+                        </td>
+                        <td>
+                            <strong>{{ payment.student.user.get_full_name }}</strong><br>
+                            <small style="color: #7f8c8d;">
+                                <i class="fas fa-id-card"></i> {{ payment.student.admission_number }}<br>
+                                <i class="fas fa-graduation-cap"></i> Class {{ payment.student.current_class }}-{{ payment.student.section }}
+                            </small>
+                        </td>
+                        <td class="amount">₹{{ payment.amount|floatformat:2 }}</td>
+                        <td>
+                            <span class="payment-method">
+                                {% if payment.payment_method == 'cash' %}💵
+                                {% elif payment.payment_method == 'cheque' %}📝
+                                {% elif payment.payment_method == 'online' %}🌐
+                                {% elif payment.payment_method == 'card' %}💳
+                                {% elif payment.payment_method == 'upi' %}📱
+                                {% endif %}
+                                {{ payment.get_payment_method_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if payment.reference_number %}
+                            <small>{{ payment.reference_number }}</small>
+                            {% else %}
+                            <small style="color: #95a5a6;">-</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ payment.status }}">
+                                <i class="fas 
+                                    {% if payment.status == 'completed' %}fa-check-circle
+                                    {% elif payment.status == 'pending' %}fa-clock
+                                    {% elif payment.status == 'failed' %}fa-times-circle
+                                    {% else %}fa-refund{% endif %}">
+                                </i>
+                                {{ payment.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="action-links">
+                            <a href="{% url 'payment_detail' payment.pk %}" class="btn-info">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="{% url 'payment_receipt' payment.pk %}" class="btn-success" target="_blank">
+                                <i class="fas fa-print"></i> Receipt
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-credit-card"></i>
+                                <h3>No Payments Found</h3>
+                                <p>There are no payment records matching your criteria.</p>
+                                <a href="{% url 'payment_create' %}" class="btn btn-success">
+                                    <i class="fas fa-plus-circle"></i> Record Your First Payment
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if status %}&status={{ status }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if query %}&q={{ query }}{% endif %}">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if status %}&status={{ status }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if query %}&q={{ query }}{% endif %}">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="current">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if status %}&status={{ status }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if query %}&q={{ query }}{% endif %}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if status %}&status={{ status }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if query %}&q={{ query }}{% endif %}">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if status %}&status={{ status }}{% endif %}{% if method %}&method={{ method }}{% endif %}{% if query %}&q={{ query }}{% endif %}">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            {% endif %}
+        </div>
+        
+        <div class="info-text" style="text-align: center;">
+            <i class="fas fa-info-circle"></i> 
+            Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ page_obj.paginator.count }} payments
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

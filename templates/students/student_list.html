@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student List - SmartSchool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 2em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+        }
+        
+        .btn-info {
+            background: #3498db;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .search-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dde0e3;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+        }
+        
+        .search-btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            height: 42px;
+        }
+        
+        .search-btn:hover {
+            background: #2980b9;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th {
+            background: #34495e;
+            color: white;
+            padding: 15px 10px;
+            font-weight: 500;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .action-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .pagination {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 8px 15px;
+            border: 1px solid #dee2e6;
+            text-decoration: none;
+            color: #3498db;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .pagination a:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .pagination .current {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #95a5a6;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 150px;
+        }
+        
+        .stats-card .number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .stats-card .label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-actions">
+            <h1>📚 Student Management</h1>
+            <div>
+                <a href="{% url 'mark_attendance' %}" class="btn btn-success">📋 Mark Attendance</a>
+                <a href="{% url 'student_create' %}" class="btn btn-primary">➕ Add New Student</a>
+            </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="search-section">
+            <form method="GET" style="display: flex; gap: 15px; flex-wrap: wrap; width: 100%;">
+                <div class="form-group">
+                    <label>🔍 Search</label>
+                    <input type="text" name="q" class="form-control" placeholder="Search by name, admission no..." value="{{ query }}">
+                </div>
+                
+                <div class="form-group">
+                    <label>📖 Class</label>
+                    <select name="class" class="form-control">
+                        <option value="">All Classes</option>
+                        {% for class in classes %}
+                        <option value="{{ class }}" {% if class_filter == class %}selected{% endif %}>Class {{ class }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="search-btn">Apply Filters</button>
+                {% if query or class_filter %}
+                <a href="{% url 'student_list' %}" class="btn btn-warning" style="text-decoration: none; color: white;">Clear Filters</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Students Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Admission No</th>
+                        <th>Student Name</th>
+                        <th>Class & Section</th>
+                        <th>Roll No</th>
+                        <th>Father's Name</th>
+                        <th>Contact</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in page_obj %}
+                    <tr>
+                        <td><strong>{{ student.admission_number }}</strong></td>
+                        <td>
+                            {{ student.get_full_name }}<br>
+                            <small style="color: #7f8c8d;">{{ student.user.email|default:"No email" }}</small>
+                        </td>
+                        <td>
+                            Class {{ student.current_class }}-{{ student.section }}
+                        </td>
+                        <td>{{ student.roll_number }}</td>
+                        <td>{{ student.father_name }}</td>
+                        <td>
+                            {{ student.father_phone }}<br>
+                            <small>{{ student.emergency_contact }}</small>
+                        </td>
+                        <td>
+                            {% if student.is_active %}
+                            <span class="status-badge status-active">Active</span>
+                            {% else %}
+                            <span class="status-badge status-inactive">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-links">
+                                <a href="{% url 'student_detail' student.pk %}" class="btn btn-info" style="color: white;">View</a>
+                                <a href="{% url 'student_edit' student.pk %}" class="btn btn-warning" style="color: white;">Edit</a>
+                                <a href="{% url 'student_delete' student.pk %}" class="btn btn-danger" style="color: white;" onclick="return confirm('Are you sure you want to deactivate this student?')">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i>📭</i>
+                                <h3>No Students Found</h3>
+                                <p>Get started by adding your first student.</p>
+                                <a href="{% url 'student_create' %}" class="btn btn-primary" style="margin-top: 15px;">Add New Student</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if class_filter %}&class={{ class_filter }}{% endif %}">« First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if class_filter %}&class={{ class_filter }}{% endif %}">‹ Previous</a>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="current">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if class_filter %}&class={{ class_filter }}{% endif %}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if class_filter %}&class={{ class_filter }}{% endif %}">Next ›</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if class_filter %}&class={{ class_filter }}{% endif %}">Last »</a>
+            {% endif %}
+        </div>
+        
+        <div style="text-align: center; margin-top: 15px; color: #7f8c8d;">
+            Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ page_obj.paginator.count }} students
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

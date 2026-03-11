@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice {{ invoice.invoice_number }} - SmartSchool</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        .invoice-title {
+            text-align: right;
+        }
+        .invoice-title h2 {
+            color: #3498db;
+            font-size: 28px;
+        }
+        .invoice-title p {
+            color: #7f8c8d;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-secondary { background: #95a5a6; color: white; }
+        .btn-warning { background: #f39c12; color: white; }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .status-draft { background: #ecf0f1; color: #7f8c8d; }
+        .status-sent { background: #fff3cd; color: #856404; }
+        .status-partial { background: #cce5ff; color: #004085; }
+        .status-paid { background: #d4edda; color: #155724; }
+        .status-overdue { background: #f8d7da; color: #721c24; }
+        
+        .company-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .company-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .company-info p {
+            color: #7f8c8d;
+            margin: 5px 0;
+        }
+        
+        .bill-to {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .bill-to h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .bill-to p {
+            color: #7f8c8d;
+            margin: 5px 0;
+        }
+        
+        .invoice-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .detail-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .detail-item .label {
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+        .detail-item .value {
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .text-right {
+            text-align: right;
+        }
+        
+        .totals {
+            width: 300px;
+            margin-left: auto;
+            margin-bottom: 30px;
+        }
+        .totals table {
+            width: 100%;
+        }
+        .totals td {
+            padding: 8px;
+            border: none;
+        }
+        .totals .grand-total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        
+        .payments-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .payments-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        @media print {
+            .no-print { display: none; }
+            body { background: white; }
+            .container { box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header with actions (hidden when printing) -->
+        <div class="header no-print">
+            <a href="{% url 'invoice_list' %}" class="btn btn-secondary">← Back to Invoices</a>
+            <div>
+                <button onclick="window.print()" class="btn btn-primary">🖨️ Print</button>
+                {% if invoice.status != 'paid' %}
+                <a href="{% url 'payment_create' %}?invoice={{ invoice.pk }}" class="btn btn-success">💰 Record Payment</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Invoice Title -->
+        <div class="invoice-title">
+            <h2>INVOICE</h2>
+            <p>{{ invoice.invoice_number }}</p>
+        </div>
+
+        <!-- Company and Student Details -->
+        <div class="company-details">
+            <div class="company-info">
+                <h3>SmartSchool</h3>
+                <p>123 Education Street</p>
+                <p>City, State - 123456</p>
+                <p>Email: accounts@smartschool.edu</p>
+                <p>Phone: +91 1234567890</p>
+            </div>
+            <div>
+                <span class="status-badge status-{{ invoice.status }}">
+                    {{ invoice.get_status_display }}
+                </span>
+            </div>
+        </div>
+
+        <div class="bill-to">
+            <h3>Bill To:</h3>
+            <p><strong>{{ invoice.student.user.get_full_name }}</strong></p>
+            <p>Admission No: {{ invoice.student.admission_number }}</p>
+            <p>Class: {{ invoice.student.current_class }} - Section {{ invoice.student.section }}</p>
+            <p>Father's Name: {{ invoice.student.father_name }}</p>
+            <p>Phone: {{ invoice.student.father_phone }}</p>
+        </div>
+
+        <!-- Invoice Dates -->
+        <div class="invoice-details">
+            <div class="detail-item">
+                <div class="label">Issue Date</div>
+                <div class="value">{{ invoice.issue_date|date:"d M Y" }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">Due Date</div>
+                <div class="value">{{ invoice.due_date|date:"d M Y" }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">Academic Year</div>
+                <div class="value">{{ invoice.academic_year }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="label">Status</div>
+                <div class="value">{{ invoice.get_status_display }}</div>
+            </div>
+        </div>
+
+        <!-- Invoice Items -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Discount</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.unit_price }}</td>
+                    <td>₹{{ item.discount }}</td>
+                    <td class="text-right">₹{{ item.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Totals -->
+        <div class="totals">
+            <table>
+                <tr>
+                    <td>Subtotal:</td>
+                    <td class="text-right">₹{{ invoice.subtotal }}</td>
+                </tr>
+                <tr>
+                    <td>Discount:</td>
+                    <td class="text-right">- ₹{{ invoice.discount }}</td>
+                </tr>
+                <tr>
+                    <td>Late Fee:</td>
+                    <td class="text-right">+ ₹{{ invoice.late_fee }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Total:</strong></td>
+                    <td class="text-right grand-total">₹{{ invoice.total }}</td>
+                </tr>
+                <tr>
+                    <td>Paid Amount:</td>
+                    <td class="text-right">₹{{ invoice.paid_amount }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Due Amount:</strong></td>
+                    <td class="text-right" style="color: #e74c3c;">₹{{ invoice.due_amount }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Payment History -->
+        {% if payments %}
+        <div class="payments-section">
+            <h3>Payment History</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Receipt #</th>
+                        <th>Date</th>
+                        <th>Method</th>
+                        <th>Amount</th>
+                        <th>Reference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>{{ payment.receipt_number }}</td>
+                        <td>{{ payment.payment_date|date:"d/m/Y" }}</td>
+                        <td>{{ payment.get_payment_method_display }}</td>
+                        <td>₹{{ payment.amount }}</td>
+                        <td>{{ payment.reference_number|default:"-" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Notes and Terms -->
+        {% if invoice.notes %}
+        <div style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <h4>Notes:</h4>
+            <p>{{ invoice.notes }}</p>
+        </div>
+        {% endif %}
+
+        {% if invoice.terms %}
+        <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <h4>Terms & Conditions:</h4>
+            <p>{{ invoice.terms }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>This is a computer generated invoice - valid without signature</p>
+            <p>Thank you for your business!</p>
+        </div>
+    </div>
+</body>
+</html>

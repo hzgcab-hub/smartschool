@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - SmartSchool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 25px;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+        }
+
+        .logo span {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            border: 3px solid white;
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-top: 5px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .page-title h1 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .stat-icon.blue { background: #e6f0ff; color: #3498db; }
+        .stat-icon.green { background: #e0f7e6; color: #27ae60; }
+        .stat-icon.orange { background: #fff0e0; color: #f39c12; }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .card-header h3 {
+            color: #2c3e50;
+        }
+
+        .view-link {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .item-list {
+            list-style: none;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item-title {
+            font-weight: 500;
+        }
+
+        .item-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+
+        .fee-status {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .fee-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-user-graduate"></i>
+                <span>SmartSchool</span>
+            </div>
+
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-name">{{ student.user.get_full_name }}</div>
+                <div class="user-role">Student - Class {{ student.current_class }}-{{ student.section }}</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1>Welcome, {{ student.user.first_name }}! 👋</h1>
+                    <p>Admission No: {{ student.admission_number }} | Roll No: {{ student.roll_number }}</p>
+                </div>
+                <a href="{% url 'logout' %}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+
+           <!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-info">
+            <h3>85%</h3>
+            <p>Attendance</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-info">
+            <h3>A-</h3>
+            <p>Average Grade</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon orange">
+            <i class="fas fa-tasks"></i>
+        </div>
+        <div class="stat-info">
+            <h3>{{ recent_homework|length|default:"0" }}</h3>
+            <p>Pending Homework</p>
+        </div>
+    </div>
+</div>
+<!-- Quick Actions Section - Add this where you want action buttons -->
+<div class="quick-actions" style="margin-top: 30px;">
+    <h3>Quick Actions</h3>
+    <div class="actions-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+        <a href="/courses/" class="action-btn" style="background: #3498db; color: white; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none;">
+            <i class="fas fa-book"></i>
+            <span>View Courses</span>
+        </a>
+        <a href="/homework/" class="action-btn" style="background: #27ae60; color: white; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none;">
+            <i class="fas fa-tasks"></i>
+            <span>View Homework</span>
+        </a>
+        <a href="/attendance/" class="action-btn" style="background: #f39c12; color: white; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none;">
+            <i class="fas fa-calendar-check"></i>
+            <span>My Attendance</span>
+        </a>
+    </div>
+</div>
+
+            <!-- Main Grid -->
+            <div class="cards-grid">
+                <!-- Upcoming Exams -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📝 Upcoming Exams</h3>
+                        <a href="/academics/exams/" class="view-link">View All</a>
+                    </div>
+                    <ul class="item-list">
+                        {% for exam in upcoming_exams %}
+                        <li class="item">
+                            <span class="item-title">{{ exam.name }}</span>
+                            <span class="item-date">{{ exam.start_date|date:"M d, Y" }}</span>
+                        </li>
+                        {% empty %}
+                        <li class="item">No upcoming exams</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Recent Homework -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📚 Recent Homework</h3>
+                        <a href="/classes/homework/" class="view-link">View All</a>
+                    </div>
+                    <ul class="item-list">
+                        {% for hw in recent_homework %}
+                        <li class="item">
+                            <span class="item-title">{{ hw.title }}</span>
+                            <span class="badge badge-warning">Due {{ hw.due_date|date:"M d" }}</span>
+                        </li>
+                        {% empty %}
+                        <li class="item">No homework assigned</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Recent Results -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📊 Recent Results</h3>
+                        <a href="/academics/results/" class="view-link">View All</a>
+                    </div>
+                    <ul class="item-list">
+                        {% for result in recent_results %}
+                        <li class="item">
+                            <span class="item-title">{{ result.exam.name }}</span>
+                            <span class="badge badge-success">{{ result.percentage }}%</span>
+                        </li>
+                        {% empty %}
+                        <li class="item">No results published</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Fee Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>💰 Fee Status</h3>
+                        <a href="/finance/" class="view-link">View Details</a>
+                    </div>
+                    <div class="fee-status">
+                        <p>Pending Dues</p>
+                        <div class="fee-amount">ETB {{ pending_fees|floatformat:2 }}</div>
+                        {% if pending_fees > 0 %}
+                        <a href="/finance/payments/create/" class="btn-sm" style="background: #27ae60; color: white; padding: 8px 20px; border-radius: 5px; text-decoration: none; display: inline-block; margin-top: 10px;">Pay Now</a>
+                        {% else %}
+                        <p style="color: #27ae60; margin-top: 10px;">All fees paid ✓</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Notices -->
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h3>📢 Recent Notices</h3>
+                    <a href="/notices/" class="view-link">View All</a>
+                </div>
+                <ul class="item-list">
+                    {% for notice in recent_notices %}
+                    <li class="item">
+                        <span class="item-title">{{ notice.title }}</span>
+                        <span class="item-date">{{ notice.publish_date|date:"M d, Y" }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="item">No new notices</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

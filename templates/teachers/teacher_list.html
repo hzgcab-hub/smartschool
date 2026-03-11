@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher List - SmartSchool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 2em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+        }
+        
+        .btn-info {
+            background: #3498db;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+        
+        .search-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dde0e3;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .search-btn {
+            background: #3498db;
+            color: white;
+            padding: 10px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            height: 42px;
+        }
+        
+        .search-btn:hover {
+            background: #2980b9;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th {
+            background: #34495e;
+            color: white;
+            padding: 15px 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 14px;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .action-links {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .pagination {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 8px 15px;
+            border: 1px solid #dee2e6;
+            text-decoration: none;
+            color: #3498db;
+            border-radius: 5px;
+        }
+        
+        .pagination a:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        .pagination .current {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #95a5a6;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .clear-filters {
+            background: #95a5a6;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        
+        .clear-filters:hover {
+            background: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-actions">
+            <h1>👨‍🏫 Teacher Management</h1>
+            <div>
+                <a href="{% url 'mark_teacher_attendance' %}" class="btn btn-success">📋 Mark Attendance</a>
+                <a href="{% url 'teacher_create' %}" class="btn btn-primary">➕ Add New Teacher</a>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form method="GET" class="search-form">
+                <div class="form-group">
+                    <label>🔍 Search</label>
+                    <input type="text" name="q" class="form-control" placeholder="Search by name, ID, specialization..." value="{{ query }}">
+                </div>
+                
+                <div class="form-group">
+                    <label>💼 Employment Type</label>
+                    <select name="employment_type" class="form-control">
+                        <option value="">All Types</option>
+                        {% for type in employment_types %}
+                        <option value="{{ type }}" {% if emp_type == type %}selected{% endif %}>{{ type|title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>🎓 Qualification</label>
+                    <select name="qualification" class="form-control">
+                        <option value="">All Levels</option>
+                        {% for level in qualification_levels %}
+                        <option value="{{ level }}" {% if qual_level == level %}selected{% endif %}>{{ level|title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="search-btn">Apply Filters</button>
+                {% if query or emp_type or qual_level %}
+                <a href="{% url 'teacher_list' %}" class="clear-filters">Clear Filters</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Teachers Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Name</th>
+                        <th>Qualification</th>
+                        <th>Specialization</th>
+                        <th>Employment Type</th>
+                        <th>Experience</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for teacher in page_obj %}
+                    <tr>
+                        <td><strong>{{ teacher.employee_id }}</strong></td>
+                        <td>{{ teacher.user.get_full_name }}</td>
+                        <td>{{ teacher.get_qualification_level_display }}</td>
+                        <td>{{ teacher.specialization }}</td>
+                        <td>{{ teacher.get_employment_type_display }}</td>
+                        <td>{{ teacher.experience_years }} yrs</td>
+                        <td>
+                            {% if teacher.is_active %}
+                            <span class="status-badge status-active">Active</span>
+                            {% else %}
+                            <span class="status-badge status-inactive">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-links">
+                                <a href="{% url 'teacher_detail' teacher.pk %}" class="btn-info">View</a>
+                                <a href="{% url 'teacher_edit' teacher.pk %}" class="btn-warning">Edit</a>
+                                <a href="{% url 'teacher_delete' teacher.pk %}" class="btn-danger" onclick="return confirm('Are you sure you want to deactivate this teacher?')">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i>👨‍🏫</i>
+                                <h3>No Teachers Found</h3>
+                                <p>Click "Add New Teacher" to get started.</p>
+                                <a href="{% url 'teacher_create' %}" class="btn btn-primary" style="margin-top: 15px;">Add New Teacher</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if emp_type %}&employment_type={{ emp_type }}{% endif %}{% if qual_level %}&qualification={{ qual_level }}{% endif %}">« First</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if emp_type %}&employment_type={{ emp_type }}{% endif %}{% if qual_level %}&qualification={{ qual_level }}{% endif %}">‹ Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if emp_type %}&employment_type={{ emp_type }}{% endif %}{% if qual_level %}&qualification={{ qual_level }}{% endif %}">Next ›</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if emp_type %}&employment_type={{ emp_type }}{% endif %}{% if qual_level %}&qualification={{ qual_level }}{% endif %}">Last »</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

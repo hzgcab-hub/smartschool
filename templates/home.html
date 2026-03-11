@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSchool - Ethiopia's #1 Education Management System</title>
+    
+    <!-- Font Awesome 6 (Latest) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts - Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Animate.css for Animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <!-- AOS (Animate on Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            color: #1e293b;
+            background: #ffffff;
+        }
+
+        /* ========== ETHIOPIAN FLAG COLORS ========== */
+        :root {
+            --ethiopia-green: #078930;
+            --ethiopia-yellow: #fcdd09;
+            --ethiopia-red: #da121a;
+            --ethiopia-blue: #0f47af;
+        }
+
+        /* ========== CUSTOM CURSOR ========== */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--ethiopia-blue);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.1s ease;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            background: rgba(15, 71, 175, 0.1);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        /* ========== PRELOADER ========== */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease;
+        }
+
+        .preloader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--ethiopia-yellow);
+            border-right-color: var(--ethiopia-red);
+            border-bottom-color: var(--ethiopia-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========== NAVIGATION ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 25px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent;
+        }
+
+        .navbar.scrolled {
+            padding: 15px 50px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            transform: rotate(-5deg);
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(15, 71, 175, 0.3);
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(0deg) scale(1.1);
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 16px;
+            position: relative;
+            padding: 5px 0;
+            transition: all 0.3s;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: var(--ethiopia-blue);
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            color: white !important;
+            padding: 12px 28px !important;
+            border-radius: 50px;
+            box-shadow: 0 10px 20px rgba(15, 71, 175, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(15, 71, 175, 0.4);
+        }
+
+        .nav-btn::before {
+            display: none;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #1e293b;
+        }
+
+        /* ========== HERO SECTION ========== */
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        /* Animated Background */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 150px 50px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .hero-text {
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .hero-text h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: white;
+            margin-bottom: 20px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(252, 221, 9, 0.3); }
+            50% { text-shadow: 0 0 40px rgba(218, 18, 26, 0.6); }
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 16px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--ethiopia-blue);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-outline {
+            border: 2px solid white;
+            color: white;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--ethiopia-blue);
+            transform: translateY(-3px);
+        }
+
+        .hero-image {
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(2deg); }
+        }
+
+        .hero-image img {
+            width: 100%;
+            border-radius: 30px;
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.3);
+            transform: perspective(1000px) rotateY(-15deg);
+            transition: all 0.5s;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-image:hover img {
+            transform: perspective(1000px) rotateY(0deg);
+        }
+
+        .floating-card {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: floatCard 4s ease-in-out infinite;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes floatCard {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(10px, -20px) rotate(2deg); }
+        }
+
+        .card-1 {
+            top: 10%;
+            left: -5%;
+            animation-delay: 0s;
+            background: linear-gradient(135deg, rgba(7, 137, 48, 0.95), rgba(255, 255, 255, 0.95));
+        }
+
+        .card-2 {
+            bottom: 15%;
+            right: -5%;
+            animation-delay: 2s;
+            background: linear-gradient(135deg, rgba(218, 18, 26, 0.95), rgba(255, 255, 255, 0.95));
+        }
+
+        .card-3 {
+            top: 40%;
+            right: 0%;
+            animation-delay: 1s;
+            background: linear-gradient(135deg, rgba(252, 221, 9, 0.95), rgba(255, 255, 255, 0.95));
+        }
+
+        .floating-card i {
+            font-size: 1.8rem;
+            color: var(--ethiopia-blue);
+        }
+
+        .floating-card .card-text h4 {
+            font-size: 1rem;
+            color: #1e293b;
+            margin-bottom: 3px;
+        }
+
+        .floating-card .card-text p {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        /* ========== TRUSTED BY SECTION ========== */
+        .trusted-by {
+            padding: 60px 50px;
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trusted-by::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(7, 137, 48, 0.05) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        .trusted-by h3 {
+            color: #64748b;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .trusted-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .trusted-logos span {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #94a3b8;
+            transition: all 0.3s;
+            filter: grayscale(1);
+            opacity: 0.7;
+            position: relative;
+        }
+
+        .trusted-logos span:hover {
+            filter: grayscale(0);
+            opacity: 1;
+            color: var(--ethiopia-blue);
+            transform: scale(1.1);
+        }
+
+        /* ========== FEATURES SECTION ========== */
+        .features {
+            padding: 120px 50px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 80px;
+        }
+
+        .section-subtitle {
+            color: var(--ethiopia-blue);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .section-header p {
+            color: #64748b;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            transition: all 0.5s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: 1px solid rgba(15, 71, 175, 0.1);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            z-index: -1;
+            transform: translateY(100%);
+            transition: transform 0.5s;
+        }
+
+        .feature-card:hover::before {
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 40px 60px rgba(15, 71, 175, 0.3);
+        }
+
+        .feature-card:hover * {
+            color: white;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 25px;
+            transition: all 0.5s;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: white;
+            color: var(--ethiopia-blue);
+            transform: rotateY(180deg);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+
+        .feature-card p {
+            color: #64748b;
+            line-height: 1.8;
+        }
+
+        .feature-card:hover h3,
+        .feature-card:hover p {
+            color: white;
+        }
+
+        /* ========== STATS SECTION ========== */
+        .stats {
+            padding: 100px 50px;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwMCIgaGVpZ2h0PSI4MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZGIiBzdG9wLW9wYWNpdHk9Ii4wNSIgb2Zmc2V0PSIwJSIvPjxzdG9wIHN0b3AtY29sb3I9IiNGRkYiIHN0b3Atb3BhY2l0eT0iMCIgb2Zmc2V0PSIxMDAlIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHBhdGggZD0iTTAgMGgxNDAwdjgwMEgweiIgZmlsbD0idXJsKCNhKSIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+');
+            opacity: 0.1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+
+        /* ========== HOW IT WORKS ========== */
+        .how-it-works {
+            padding: 120px 50px;
+            background: white;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-item::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 60%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            z-index: 1;
+        }
+
+        .step-item:last-child::before {
+            display: none;
+        }
+
+        .step-item h3 {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .step-item p {
+            color: #64748b;
+            line-height: 1.8;
+        }
+
+        /* ========== TESTIMONIALS ========== */
+        .testimonials {
+            padding: 120px 50px;
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            position: relative;
+        }
+
+        .testimonials-slider {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            margin: 20px;
+            position: relative;
+            border: 1px solid rgba(15, 71, 175, 0.1);
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            font-size: 8rem;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.2;
+            font-family: serif;
+        }
+
+        .testimonial-content {
+            font-size: 1.2rem;
+            color: #1e293b;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .author-avatar {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .author-info h4 {
+            font-size: 1.2rem;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .author-info p {
+            color: #64748b;
+        }
+
+        .testimonial-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            transform: scale(1.3);
+        }
+
+        /* ========== PRICING SECTION ========== */
+        .pricing {
+            padding: 120px 50px;
+            background: white;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            transition: all 0.5s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(15, 71, 175, 0.1);
+        }
+
+        .pricing-card.popular {
+            transform: scale(1.05);
+            border: 2px solid var(--ethiopia-blue);
+            box-shadow: 0 30px 60px rgba(15, 71, 175, 0.2);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            color: white;
+            padding: 8px 40px;
+            transform: rotate(45deg);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .pricing-header h3 {
+            font-size: 2rem;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: #64748b;
+            font-weight: 400;
+            background: none;
+            -webkit-text-fill-color: #64748b;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .pricing-features li {
+            padding: 10px 0;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pricing-features li i {
+            color: var(--ethiopia-green);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 40px 60px rgba(15, 71, 175, 0.2);
+        }
+
+        .pricing-card.popular:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+
+        /* ========== CTA SECTION ========== */
+        .cta {
+            padding: 120px 50px;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .cta p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .cta .btn-primary {
+            background: white;
+            color: var(--ethiopia-blue);
+        }
+
+        .cta .btn-outline {
+            border-color: white;
+            color: white;
+        }
+
+        .cta .btn-outline:hover {
+            background: white;
+            color: var(--ethiopia-blue);
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: #0f172a;
+            color: white;
+            padding: 80px 50px 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 60px;
+            max-width: 1400px;
+            margin: 0 auto 60px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+        }
+
+        .footer-section p {
+            color: #94a3b8;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .contact-info {
+            list-style: none;
+        }
+
+        .contact-info li {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #94a3b8;
+        }
+
+        .contact-info i {
+            color: var(--ethiopia-yellow);
+            width: 20px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+
+        .footer-bottom i {
+            color: var(--ethiopia-red);
+            animation: heartbeat 1.5s ease infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ========== BACK TO TOP ========== */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--ethiopia-green), var(--ethiopia-yellow), var(--ethiopia-red));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 99;
+            box-shadow: 0 10px 20px rgba(15, 71, 175, 0.3);
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(15, 71, 175, 0.4);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding-top: 120px;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .floating-card {
+                display: none;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background: white;
+                flex-direction: column;
+                padding: 40px;
+                transition: left 0.3s;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .pricing-card.popular {
+                transform: scale(1);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .cta h2 {
+                font-size: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <span class="logo-text">SmartSchool</span>
+        </div>
+
+        <div class="nav-menu" id="navMenu">
+            <a href="#home" class="nav-link">Home</a>
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#how-it-works" class="nav-link">How It Works</a>
+            <a href="#testimonials" class="nav-link">Testimonials</a>
+            <a href="#pricing" class="nav-link">Pricing</a>
+            <a href="#contact" class="nav-link">Contact</a>
+            <a href="{% url 'login' %}" class="nav-link nav-btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </div>
+
+        <div class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div id="particles-js"></div>
+
+        <div class="hero-content">
+            <div class="hero-text">
+                <span class="hero-badge animate__animated animate__fadeInUp">
+                    <i class="fas fa-crown"></i> የኢትዮጵያ ቁጥር 1 የትምህርት ሥርዓት
+                </span>
+                <h1 class="animate__animated animate__fadeInUp animate__delay-1s">
+                    Transform Ethiopian Education with <span>SmartSchool</span>
+                </h1>
+                <p class="animate__animated animate__fadeInUp animate__delay-2s">
+                    Join 500+ schools across Ethiopia using SmartSchool to streamline administration, support 2.3M+ students like Eldana, and achieve 88% transition rates to Grade 2.
+                </p>
+                <div class="hero-buttons animate__animated animate__fadeInUp animate__delay-3s">
+                    <a href="{% url 'login' %}" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> ጀምር አሁን
+                    </a>
+                    <a href="#" class="btn btn-outline">
+                        <i class="fas fa-play"></i> ቪዲዮ ይመልከቱ
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-image">
+                <img src="https://www.worldbank.org/content/dam/photos/780x439/2024/sep/Ethiopia-Eldana.jpg" alt="Eldana - 6-year-old O-Class student in Dire Dawa, Ethiopia">
+                
+                <div class="floating-card card-1">
+                    <i class="fas fa-child"></i>
+                    <div class="card-text">
+                        <h4>2.3M+ Children</h4>
+                        <p>Benefited from O-Class</p>
+                    </div>
+                </div>
+
+                <div class="floating-card card-2">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <div class="card-text">
+                        <h4>102k+ Teachers</h4>
+                        <p>Trained in CCA method</p>
+                    </div>
+                </div>
+
+                <div class="floating-card card-3">
+                    <i class="fas fa-flag"></i>
+                    <div class="card-text">
+                        <h4>88% Transition</h4>
+                        <p>To Grade 2 success</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trusted By Section -->
+    <section class="trusted-by" data-aos="fade-up">
+        <h3>በእነዚህ ታላላቅ ትምህርት ቤቶች የታመነ</h3>
+        <div class="trusted-logos">
+            <span>ሳንፎርድ</span>
+            <span>አይሲኤስ</span>
+            <span>ብሌን</span>
+            <span>ናዝሬት</span>
+            <span>ቅዱስ ዮሴፍ</span>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-subtitle">ለምን እኛን ይምረጡ</span>
+            <h2>ዘመናዊ ትምህርት ቤትን ለማስተዳደር የሚያስፈልግዎ ሁሉም ነገር</h2>
+            <p>Powerful features that make school management effortless, efficient, and enjoyable for everyone involved.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h3>Student Management</h3>
+                <p>Complete student lifecycle management from enrollment to graduation with detailed profiles and progress tracking. Like Eldana's journey through O-Class.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h3>Teacher Portal</h3>
+                <p>Empower teachers with tools for attendance, grading, and CCA (Continuous Classroom Assessment) methodology. Support 102k+ trained educators.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h3>Finance (ETB)</h3>
+                <p>Complete financial management with Ethiopian Birr support, school grants tracking, and expense reports aligned with GEQIP-E initiatives.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-icon">
+                    <i class="fas fa-pencil-alt"></i>
+                </div>
+                <h3>Exam & Results</h3>
+                <p>Create exams, enter marks, generate report cards, and analyze student performance with beautiful charts. Track transition rates to Grade 2.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-icon">
+                    <i class="fas fa-wheelchair"></i>
+                </div>
+                <h3>Inclusive Education</h3>
+                <p>Support for students with special needs through 1,400+ Inclusive Education Resource Centers. Track resources like wheelchairs, styluses, and voice recorders.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <h3>Refugee Support</h3>
+                <p>Manage 52 refugee schools, 1,346 incentive teachers, and track educational resources for displaced communities across Ethiopia.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-item" data-aos="zoom-in">
+                <div class="stat-number">2.3M+</div>
+                <div class="stat-label">Children in O-Class</div>
+            </div>
+            <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
+                <div class="stat-number">102k+</div>
+                <div class="stat-label">Teachers Trained</div>
+            </div>
+            <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
+                <div class="stat-number">1,400+</div>
+                <div class="stat-label">Resource Centers</div>
+            </div>
+            <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
+                <div class="stat-number">88%</div>
+                <div class="stat-label">Grade 2 Transition</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-subtitle">ቀላል ሂደት</span>
+            <h2>በ3 ቀላል ደረጃዎች ይጀምሩ</h2>
+            <p>Implementing SmartSchool is faster and easier than you think.</p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-item" data-aos="fade-right">
+                <div class="step-number">1</div>
+                <h3>መለያ ይፍጠሩ</h3>
+                <p>Sign up for free and set up your school profile in minutes, just like the 52 refugee schools that joined our system.</p>
+            </div>
+
+            <div class="step-item" data-aos="fade-up">
+                <div class="step-number">2</div>
+                <h3>ውሂብዎን ያስገቡ</h3>
+                <p>Import students, teachers, classes, and subjects easily. Track O-Class enrollment and special needs requirements.</p>
+            </div>
+
+            <div class="step-item" data-aos="fade-left">
+                <div class="step-number">3</div>
+                <h3>ሥራ ይጀምሩ</h3>
+                <p>Start managing your school efficiently from day one with CCA methodology and inclusive education support.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-subtitle">ምስክርነቶች</span>
+            <h2>የትምህርት ቤት መሪዎች ምን ይላሉ</h2>
+            <p>Hear from administrators who transformed their schools with SmartSchool.</p>
+        </div>
+
+        <div class="testimonials-slider">
+            <div class="testimonial-card" data-aos="zoom-in">
+                <p class="testimonial-content">
+                    "O-Class provides pre-primary children with a strong foundation for handling primary school challenges. SmartSchool helps us track every child's journey, just like Eldana's. Children build interest in learning when they experience it through play."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">ኢጄታ</div>
+                    <div class="author-info">
+                        <h4>Ejeta Mekonnen</h4>
+                        <p>Principal, Mariam Sefer Pre-primary School</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card" data-aos="zoom-in" data-aos-delay="200" style="display: none;">
+                <p class="testimonial-content">
+                    "I've received different materials from the resource center in my school. My stylus was broken, and I got a new one from here. I also got a slate and voice recorder; these all are helping me a lot."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">ሰሚራ</div>
+                    <div class="author-info">
+                        <h4>Semira Kemal</h4>
+                        <p>Special Needs Student, Addis Ababa</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card" data-aos="zoom-in" data-aos-delay="400" style="display: none;">
+                <p class="testimonial-content">
+                    "I have taken O-Class training. It is very different from the training I have taken previously because now we understand how to teach children through play and songs. Although the children think they only play while singing, they learn a lot."
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">ዳግማዊት</div>
+                    <div class="author-info">
+                        <h4>Dagmawit Eshetu</h4>
+                        <p>O-Class Teacher, Dire Dawa</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonial-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="section-header" data-aos="fade-up">
+            <span class="section-subtitle">ዋጋ አሰጣጥ</span>
+            <h2>Simple, Transparent Pricing in ETB</h2>
+            <p>Choose the perfect plan for your school's needs, with special rates for refugee schools and special needs programs.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="pricing-card" data-aos="fade-right">
+                <div class="pricing-header">
+                    <h3>O-Class Basic</h3>
+                    <div class="price">ETB 2,500<span>/month</span></div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Up to 200 Students</li>
+                    <li><i class="fas fa-check"></i> Play-based Curriculum Tracking</li>
+                    <li><i class="fas fa-check"></i> Basic Reports</li>
+                    <li><i class="fas fa-check"></i> Teacher Training Module</li>
+                </ul>
+                <a href="#" class="btn btn-outline" style="width: 100%;">Get Started</a>
+            </div>
+
+            <div class="pricing-card popular" data-aos="zoom-in">
+                <div class="popular-badge">በጣም ተወዳጅ</div>
+                <div class="pricing-header">
+                    <h3>GEQIP-E Pro</h3>
+                    <div class="price">ETB 5,000<span>/month</span></div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Up to 500 Students</li>
+                    <li><i class="fas fa-check"></i> CCA Methodology Support</li>
+                    <li><i class="fas fa-check"></i> Inclusive Education Tools</li>
+                    <li><i class="fas fa-check"></i> Advanced Analytics</li>
+                    <li><i class="fas fa-check"></i> Priority Support</li>
+                    <li><i class="fas fa-check"></i> SMS & Email Integration</li>
+                </ul>
+                <a href="#" class="btn btn-primary" style="width: 100%;">Get Started</a>
+            </div>
+
+            <div class="pricing-card" data-aos="fade-left">
+                <div class="pricing-header">
+                    <h3>Enterprise</h3>
+                    <div class="price">Custom</div>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Unlimited Students</li>
+                    <li><i class="fas fa-check"></i> Refugee School Support</li>
+                    <li><i class="fas fa-check"></i> Custom Features</li>
+                    <li><i class="fas fa-check"></i> Dedicated Support</li>
+                    <li><i class="fas fa-check"></i> WASH Facilities Tracking</li>
+                </ul>
+                <a href="#" class="btn btn-outline" style="width: 100%;">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-content" data-aos="zoom-in">
+            <h2>ትምህርት ቤትዎን ለመለወጥ ዝግጁ ነዎት?</h2>
+            <p>Join hundreds of Ethiopian schools already using SmartSchool to streamline operations, support special needs students, and achieve better learning outcomes.</p>
+            <div class="cta-buttons">
+                <a href="{% url 'login' %}" class="btn btn-primary">
+                    <i class="fas fa-rocket"></i> ነፃ ይጀምሩ
+                </a>
+                <a href="#contact" class="btn btn-outline">
+                    <i class="fas fa-headset"></i> ይነጋገሩ
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SmartSchool</h3>
+                <p>Ethiopia's most comprehensive school management system, designed to simplify education administration and enhance learning outcomes for all students, including those with special needs and in refugee communities.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>ፈጣን አገናኞች</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Modules</h3>
+                <ul class="footer-links">
+                    <li><a href="#">O-Class Management</a></li>
+                    <li><a href="#">Teacher Portal (CCA)</a></li>
+                    <li><a href="#">Inclusive Education</a></li>
+                    <li><a href="#">Refugee School Support</a></li>
+                    <li><a href="#">WASH Facilities</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>አድራሻ</h3>
+                <ul class="contact-info">
+                    <li><i class="fas fa-map-marker-alt"></i> ቦሌ መንገድ፣ አዲስ አበባ፣ ኢትዮጵያ</li>
+                    <li><i class="fas fa-phone"></i> +251 911 234 567</li>
+                    <li><i class="fas fa-envelope"></i> info@smartschool.et</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 SmartSchool. በኢትዮጵያ ውስጥ ለኢትዮጵያ ትምህርት ቤቶች በፍቅር የተሰራ <i class="fas fa-heart"></i></p>
+        </div>
+    </footer>
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Preloader
+        window.addEventListener('load', function() {
+            document.querySelector('.preloader').classList.add('fade-out');
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // Back to Top Button
+            const backToTop = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        menuToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    navMenu.classList.remove('active');
+                }
+            });
+        });
+
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            cursorFollower.style.left = e.clientX + 'px';
+            cursorFollower.style.top = e.clientY + 'px';
+        });
+
+        // Particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: '#ffffff'
+                },
+                shape: {
+                    type: 'circle'
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true
+                },
+                size: {
+                    value: 3,
+                    random: true
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#ffffff',
+                    opacity: 0.2,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: true,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'repulse'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                }
+            },
+            retina_detect: true
+        });
+
+        // Testimonial Slider
+        let currentSlide = 0;
+        const testimonials = document.querySelectorAll('.testimonial-card');
+        const dots = document.querySelectorAll('.dot');
+
+        function showSlide(index) {
+            testimonials.forEach((card, i) => {
+                card.style.display = i === index ? 'block' : 'none';
+            });
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentSlide = index;
+                showSlide(currentSlide);
+            });
+        });
+
+        // Auto rotate testimonials
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % testimonials.length;
+            showSlide(currentSlide);
+        }, 5000);
+
+        // Initial display
+        showSlide(0);
+    </script>
+</body>
+</html>
